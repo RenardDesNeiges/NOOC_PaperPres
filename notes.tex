@@ -1,0 +1,150 @@
+\documentclass[11pt]{article}
+
+\usepackage{sectsty}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{epigraph} %quotes
+\usepackage{bm} 
+\usepackage{amssymb} %math symbols
+\usepackage{mathtools} %more math stuff
+\usepackage{amsthm} %theorems, proofs and lemmas
+\usepackage[ruled,vlined]{algorithm2e} %algoritms/pseudocode
+
+%% Theorem notation
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{problem}{Problem}[section]
+\newtheorem{property}{Property}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{definition}{Definition}[section]
+
+%% declaring abs so that it works nicely
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+
+% Swap the definition of \abs* and \norm*, so that \abs
+% and \norm resizes the size of the brackets, and the 
+% starred version does not.
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+%
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+% Marges
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=5.5in
+\textheight=9.0in
+\headsep=0.5in
+
+
+\title{Spectral Graph Matching and Quadratic Relaxations}
+\date{\today}
+\author{Noora Torpo \& Titouan Renard}
+
+\begin{document}
+\maketitle	
+
+\section{The Graph Matching Problem}
+\subsection{General problem definition and initial remarks}
+
+\begin{center}
+    \includegraphics[width=0.4\textwidth]{figures/Matching.pdf}
+\end{center}
+
+\begin{problem}
+    Given two edge-weighted graphs $G_A,G_B$, s.t. $|V(G_A)| = |V(G_B)|$ and $|E(G_a)| = |E(G_b)|$, let $A$ and $B$ denote their respective weighted adjacency matrices. \textbf{Graph Matching} (or network alignment) refers to finding a bijection $\pi^*$ (which we can think of as a permutation $\pi\in \mathcal{S}_n$ on the $n$ labels of the vertices in the set $V(G_B)$) between the vertex sets $V_A,V_B$ of so that their edge sets $E_A,E_B$ are maximally aligned (with respect to their weights). The optimal solution $\pi^*$ of the graph matching problem satisfies:
+    \begin{align}
+        \max_{\pi^* \in \mathcal{S}_n} \sum^n_{i,j=1} A_{ij}B_{\pi(i)\pi(j)}.
+        \label{QAP}
+    \end{align}
+\end{problem}
+
+\begin{remark}
+    \textbf{Properties of the weighted adjacency matrix}, recall that given a graph $G = (V,E)$ and and edge-weighting function $w:E\rightarrow\mathbb{R}^+$ the adjacency matrix $A$ associated with $G,w$ is constructed as: 
+    \[ (A_{ij} = w(e[i,j])). \]
+    Since the graph is undirected $A$ is symmetric and positive semidefinite (i.e. $z^TAz \geq 0~\forall z\in \mathbb{R}^n$ is trivially true as $w(e)\geq 0~\forall e\in E(G)$). $\Rightarrow$ $A$ has $n$ real (not necessarily distinct positive) eigenvalues $\lambda_i \geq 0$.
+\end{remark}
+
+\begin{definition}
+    Given the adjacency matrix $A$ of the graph $G$ we write it's spectral decomposition as: 
+    \begin{align*}
+        (A_ij) = \left(\sum_{ij}^n \lambda_i u_i u_i^T\right), \\ 
+        A = Q \Lambda Q^T.
+    \end{align*}
+\end{definition}
+
+\subsection{An optimization perspective on the problem}
+
+The problem as stated in (\ref{QAP}) is an instance of the quadratic assignment problem a (QAP) which is NP-hard. Which can also be written in matrix notation as follows as a combinatorial optimization problem on permutation matrices $\Pi\in \mathcal{G}_n$:
+\begin{align*}
+    \max_{\Pi\in \mathcal{G}_n}  \langle A,\Pi B \Pi^T \rangle \iff 
+    \min_{\Pi\in \mathcal{G}_n} \| A - \Pi B \Pi^T \|_F^2 \iff
+    \min_{\Pi\in \mathcal{G}_n} \| A \Pi - \Pi B \|_F^2 
+\end{align*}
+
+Which can in turn be relaxed from the set of permutations to it's convex hull (\textit{the Birkhoff polytope}) into the following a quadratic program which is convex with respect to the relaxed permutation matrix $X$:
+\begin{align}
+    \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2
+    \label{RelaxedOPTIM}
+\end{align}
+Where the Birkhoff polytope is given by: 
+\begin{align*}
+    \mathcal{B}_n := \{ X \in \mathbb{R}^{n \times n} : X\bm{1} = \bm{1},X^T\bm{1} = \bm{1}, X_{ij} \geq 0 ~ \forall i,j \},
+\end{align*}
+with $\bm{1}$ denoting the all ones $1 \times n$ vector.\\
+
+We will show that the spectral method we discuss in the next section outputs a matrix $\hat{X}$ which is a minimizer of the following quadratic problem:
+\begin{align}
+    \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2 + \frac{\eta^2}{2} \|X\|^2_F - \bm{1}^T X \bm{1}.
+    \label{SpectralOPTIM}
+\end{align}
+Observe that for well chosen $\eta$ (\refeq{SpectralOPTIM}) has the same solution as (\refeq{RelaxedOPTIM}).
+
+\newpage
+\section{A spectral algorithm for the graph matching problem}
+
+In the following section we use the following notation for the spectral decomposition of the adjacency matrices $A$ and $B$ of graphs $G_A$ and $G_B$ as:
+\begin{align*}
+    A = \sum^n_{i=1} \lambda_i u_i u_i^T, && B = \sum^n_{j=1} \mu_j v_j v_j^T,
+\end{align*}
+where the eigenvalues are sorted such that:
+\begin{align*}
+    \lambda_1 \geq ... \geq \lambda_n, && \mu_1 \geq ... \geq \mu_n.
+\end{align*}
+
+
+
+\begin{algorithm}
+    \label{GRAMPA}
+    \caption{Graph Matching by Pairwise eigen-Alignment (GRAMPA)}
+    \textbf{Input:} Weighted adjacency matrices $A, B \in \mathbb{R}^{n\times n}$ and tuning parameter $\eta \in \mathbb{R}$ \\
+    \textbf{Output:} A permutation $\hat{\pi} \in \mathcal{S}_n$ \\
+    Construct the similarity matrix:
+    \begin{align}
+        \hat{X} = \sum^n_{i,j} w(\lambda j,\mu_j) u_i^T u_i \bm{J} v_j v_j^T \in \mathbb{R}^{n \times n},
+    \end{align}
+    where $\bm{J}$ denotes the all ones $\mathbb{R}^{n \times n}$ matrix and $w$ is the Cauchy kernel of bandwidth $\eta$.
+    \begin{align}
+        w(x,y) = \frac{1}{(x-y)^2 + \eta^2}.
+    \end{align}
+    Output the permutation estimate $\hat{\pi}$ by rounding $\hat{X}$ to a permutation by solving the following linear assignment problem:
+    \begin{align}
+        \hat{\pi} = \underset{\pi \in \mathbb{S}_n}{argmax}\sum^n_{i=1} \hat{X}_{i, \pi(i)}.
+    \end{align}
+\end{algorithm}
+
+\begin{property}
+    \label{equivariance}
+    (\textbf{equivariance}) let $\hat{\pi}(A,B)$ denote the output of Algorithm \ref{GRAMPA}, for any given permutation $\pi$ on $B$ (which gives the permuted matrix $B^\pi$ constructed as $B^\pi_{ij} = B_{\pi{i},\pi{j}}$) we have the following property:
+    \begin{align}
+        \pi \circ \hat{\pi} (A,B^\pi) = 
+    \end{align}
+\end{property}
+
+\end{document}
