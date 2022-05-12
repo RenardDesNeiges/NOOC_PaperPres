@@ -79,32 +79,10 @@
     \end{align*}
 \end{definition}
 
-\subsection{An optimization perspective on the problem}
+\subsection{Gaussian Wigner Model description}
 
-The problem as stated in (\ref{QAP}) is an instance of the quadratic assignment problem a (QAP) which is NP-hard. Which can also be written in matrix notation as follows as a combinatorial optimization problem on permutation matrices $\Pi\in \mathcal{G}_n$:
-\begin{align*}
-    \max_{\Pi\in \mathcal{G}_n}  \langle A,\Pi B \Pi^T \rangle \iff 
-    \min_{\Pi\in \mathcal{G}_n} \| A - \Pi B \Pi^T \|_F^2 \iff
-    \min_{\Pi\in \mathcal{G}_n} \| A \Pi - \Pi B \|_F^2 
-\end{align*}
+\textbf{Titou presents that, use the plots}
 
-Which can in turn be relaxed from the set of permutations to it's convex hull (\textit{the Birkhoff polytope}) into the following a quadratic program which is convex with respect to the relaxed permutation matrix $X$:
-\begin{align}
-    \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2
-    \label{RelaxedOPTIM}
-\end{align}
-Where the Birkhoff polytope is given by: 
-\begin{align*}
-    \mathcal{B}_n := \{ X \in \mathbb{R}^{n \times n} : X\bm{1} = \bm{1},X^T\bm{1} = \bm{1}, X_{ij} \geq 0 ~ \forall i,j \},
-\end{align*}
-with $\bm{1}$ denoting the all ones $1 \times n$ vector.\\
-
-We will show that the spectral method we discuss in the next section outputs a matrix $\hat{X}$ which is a minimizer of the following quadratic problem:
-\begin{align}
-    \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2 + \frac{\eta^2}{2} \|X\|^2_F - \bm{1}^T X \bm{1}.
-    \label{SpectralOPTIM}
-\end{align}
-Observe that for well chosen $\eta$ (\refeq{SpectralOPTIM}) has the same solution as (\refeq{RelaxedOPTIM}).
 
 \newpage
 \section{A spectral algorithm for the graph matching problem}
@@ -143,8 +121,52 @@ where the eigenvalues are sorted such that:
     \label{equivariance}
     (\textbf{equivariance}) let $\hat{\pi}(A,B)$ denote the output of Algorithm \ref{GRAMPA}, for any given permutation $\pi$ on $B$ (which gives the permuted matrix $B^\pi$ constructed as $B^\pi_{ij} = B_{\pi{i},\pi{j}}$) we have the following property:
     \begin{align}
-        \pi \circ \hat{\pi} (A,B^\pi) = 
+        \pi \circ \hat{\pi} (A,B^\pi) = ...
     \end{align}
 \end{property}
+
+\newpage
+\subsection{Theorem 2.1 Outline}
+\textbf{Noora writes out the outline, focus on the argmax bound}
+
+
+
+\subsection{An optimization perspective on the problem}
+
+The problem as stated in (\ref{QAP}) is an instance of the quadratic assignment problem a (QAP) which is NP-hard. Which can also be written in matrix notation as follows as a combinatorial optimization problem on permutation matrices $\Pi\in \mathcal{G}_n$:
+\begin{align*}
+    \max_{\Pi\in \mathcal{G}_n}  \langle A,\Pi B \Pi^T \rangle \iff 
+    \min_{\Pi\in \mathcal{G}_n} \| A - \Pi B \Pi^T \|_F^2 \iff
+    \min_{\Pi\in \mathcal{G}_n} \| A \Pi - \Pi B \|_F^2 
+\end{align*}
+
+Which can in turn be relaxed from the set of permutations to it's convex hull (\textit{the Birkhoff polytope}) into the following a quadratic program which is convex with respect to the relaxed permutation matrix $X$:
+\begin{align}
+    \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2
+    \label{RelaxedOPTIM}
+\end{align}
+Where the Birkhoff polytope is given by: 
+\begin{align*}
+    \mathcal{B}_n := \{ X \in \mathbb{R}^{n \times n} : X\bm{1} = \bm{1},X^T\bm{1} = \bm{1}, X_{ij} \geq 0 ~ \forall i,j \},
+\end{align*}
+with $\bm{1}$ denoting the all ones $1 \times n$ vector.\\
+
+We will show that the spectral method we discuss in the next section outputs a matrix $\hat{X}$ which is a minimizer of the following quadratic problem:
+\begin{align}
+    \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2 + \frac{\eta^2}{2} \|X\|^2_F - \bm{1}^T X \bm{1}.
+    \label{SpectralOPTIM}
+\end{align}
+Observe that for well chosen $\eta$ (\refeq{SpectralOPTIM}) has the same solution as (\refeq{RelaxedOPTIM}).
+
+\textbf{Titou writes out the convergence proof}
+
+
+\section{Results}
+
+
+\textbf{Noora}
+
+
+
 
 \end{document}
