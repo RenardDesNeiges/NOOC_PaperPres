@@ -65,14 +65,14 @@
     \end{align}
 \end{problem}
 
-\begin{remark}
-    \textbf{Properties of the weighted adjacency matrix}, recall that given a graph $G = (V,E)$ and and edge-weighting function $w:E\rightarrow\mathbb{R}^+$ the adjacency matrix $A$ associated with $G,w$ is constructed as: 
+\begin{definition}
+    (Adjacency Matrix) \textbf{Properties of the weighted adjacency matrix}, recall that given a graph $G = (V,E)$ and and edge-weighting function $w:E\rightarrow\mathbb{R}^+$ the adjacency matrix $A$ associated with $G,w$ is constructed as: 
     \[ (A_{ij} = w(e[i,j])). \]
-    Since the graph is undirected $A$ is symmetric and positive semidefinite (i.e. $z^TAz \geq 0~\forall z\in \mathbb{R}^n$ is trivially true as $w(e)\geq 0~\forall e\in E(G)$). $\Rightarrow$ $A$ has $n$ real (not necessarily distinct positive) eigenvalues $\lambda_i \geq 0$.
-\end{remark}
+    %Since the graph is undirected $A$ is symmetric and positive \textbf{WRONG, NEGATIVE WEIGHTS EXIST} semidefinite (i.e. $z^TAz \geq 0~\forall z\in \mathbb{R}^n$ is trivially true as $w(e)\geq 0~\forall e\in E(G)$). $\Rightarrow$ $A$ has $n$ real (not necessarily distinct positive) eigenvalues $\lambda_i \geq 0$.
+\end{definition}
 
 \begin{definition}
-    Given the adjacency matrix $A$ of the graph $G$ we write it's spectral decomposition as: 
+    (Spectral Decomposition) Given the adjacency matrix $A$ of the graph $G$ we write it's spectral decomposition as: 
     \begin{align*}
         (A_ij) = \left(\sum_{ij}^n \lambda_i u_i u_i^T\right), \\ 
         A = Q \Lambda Q^T.
