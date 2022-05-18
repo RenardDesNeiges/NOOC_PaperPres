@@ -5,6 +5,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{epigraph} %quotes
 \usepackage{bm} 
+\usepackage{wrapfig} 
 \usepackage{amssymb} %math symbols
 \usepackage{mathtools} %more math stuff
 \usepackage{amsthm} %theorems, proofs and lemmas
@@ -51,14 +52,25 @@
 \maketitle	
 
 \section{The Graph Matching Problem}
+\begin{wrapfigure}{r}{6cm}
+    \includegraphics[width=6cm]{figures/Matching.pdf}
+    \caption{A maximal graph matching for two graphs.}
+\end{wrapfigure} 
+
+
+The following section we define the graph matching problem and then we discuss the Gaussian-Wigner model of graph matching.
+
 \subsection{General problem definition and initial remarks}
 
-\begin{center}
-    \includegraphics[width=0.4\textwidth]{figures/Matching.pdf}
-\end{center}
+% \begin{center}
+%     \includegraphics[width=0.4\textwidth]{figures/Matching.pdf}
+% \end{center}
+
+
 
 \begin{problem}
     Given two edge-weighted graphs $G_A,G_B$, s.t. $|V(G_A)| = |V(G_B)|$ and $|E(G_a)| = |E(G_b)|$, let $A$ and $B$ denote their respective weighted adjacency matrices. \textbf{Graph Matching} (or network alignment) refers to finding a bijection $\pi^*$ (which we can think of as a permutation $\pi\in \mathcal{S}_n$ on the $n$ labels of the vertices in the set $V(G_B)$) between the vertex sets $V_A,V_B$ of so that their edge sets $E_A,E_B$ are maximally aligned (with respect to their weights). The optimal solution $\pi^*$ of the graph matching problem satisfies:
+      
     \begin{align}
         \max_{\pi^* \in \mathcal{S}_n} \sum^n_{i,j=1} A_{ij}B_{\pi(i)\pi(j)}.
         \label{QAP}
@@ -68,7 +80,6 @@
 \begin{definition}
     (Adjacency Matrix) \textbf{Properties of the weighted adjacency matrix}, recall that given a graph $G = (V,E)$ and and edge-weighting function $w:E\rightarrow\mathbb{R}^+$ the adjacency matrix $A$ associated with $G,w$ is constructed as: 
     \[ (A_{ij} = w(e[i,j])). \]
-    %Since the graph is undirected $A$ is symmetric and positive \textbf{WRONG, NEGATIVE WEIGHTS EXIST} semidefinite (i.e. $z^TAz \geq 0~\forall z\in \mathbb{R}^n$ is trivially true as $w(e)\geq 0~\forall e\in E(G)$). $\Rightarrow$ $A$ has $n$ real (not necessarily distinct positive) eigenvalues $\lambda_i \geq 0$.
 \end{definition}
 
 \begin{definition}
@@ -79,12 +90,49 @@
     \end{align*}
 \end{definition}
 
-\subsection{Gaussian Wigner Model description}
+\subsection{The Gaussian Wigner Model}
 
-\textbf{Titou presents that, use the plots}
+\begin{wrapfigure}{r}{7cm}
+    \includegraphics[width=7cm]{figures/gaussian_graph.png}
+    \caption{$GOE(5)$ complete graph $G_a$ (left) and it's adjacency matrix $A$ (right).}
+\end{wrapfigure} 
 
 
-\newpage
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{figures/gaussian_graph.png}
+%     \caption{$GOE(5)$ complete graph $G_a$ (left) and it's adjacency matrix $A$ (right).}
+% \end{figure}
+% \textbf{Titou presents that, use the plots}
+\begin{definition}
+    (Gaussian Orthogonal Ensemble) we say that $A \in \mathbb{R}^{n\times n}$ is \textit{from the Gaussian Orthogonal Ensemble} ($A \sim GOE(n)$) if $A$ is symmetric and
+    \begin{align*}
+        (A_{ij}) = 
+        \begin{cases}
+            \sim \mathcal{N}(0,\frac{1}{n}) & i \neq j, \\
+            \sim \mathcal{N}(0,\frac{2}{n}) & i = j.
+        \end{cases}
+    \end{align*}
+\end{definition}
+
+
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[width=0.9\textwidth]{figures/GaussianWigner.png}
+%     \caption{Generation of adjacency matrices with the Gaussian Wigner Model. From left to right $A$, $Z$, $A+\sigma Z$, $B$.}
+% \end{figure}
+
+\begin{definition}
+    (Gaussian Wigner Model) We say that the graph pair $G_A,G_B$ described by the matrix pair $A,B \in \mathbb{R}^{n\times n}$ follows the Gaussian Wigner model if:
+    \begin{align}
+        B^{\pi^*} = A + \sigma Z,    
+        \label{GaussianWigner}
+    \end{align}
+    where $A,Z \sim GOE(n)$ are independent and $\sigma \geq 0$ and $\pi^*$ is the permutation that we try to recover.
+\end{definition}
+
+
+% \newpage
 \section{A spectral algorithm for the graph matching problem}
 
 In the following section we use the following notation for the spectral decomposition of the adjacency matrices $A$ and $B$ of graphs $G_A$ and $G_B$ as:
@@ -121,13 +169,12 @@ where the eigenvalues are sorted such that:
     \label{equivariance}
     (\textbf{equivariance}) let $\hat{\pi}(A,B)$ denote the output of Algorithm \ref{GRAMPA}, for any given permutation $\pi$ on $B$ (which gives the permuted matrix $B^\pi$ constructed as $B^\pi_{ij} = B_{\pi{i},\pi{j}}$) we have the following property:
     \begin{align}
-        \pi \circ \hat{\pi} (A,B^\pi) = ...
+        \pi \circ \hat{\pi} (A,B^\pi) = \hat{\pi} (A,B)
     \end{align}
 \end{property}
 
 \newpage
 \subsection{Theorem 2.1 Outline}
-\textbf{Noora writes out the outline, focus on the argmax bound}
 
 The above described algorithm relays firmly on a theorem presented in the paper. At the last step of the algorithm, the similarity matrix is rounded to a vector that is claimed to present the estimation of the search permutation (add ref to line in algo). As we can see rounding is done by choosing the permutation that maximizes the sum of the diagonal elements after permuting the columns of the similarity matrix. The theorem, that ensures that this is indeed the best possible permutation, informally tells us that the diagonal elements of the similarity matrix are most likely higher than the other elements.
 
@@ -140,45 +187,76 @@ The above described algorithm relays firmly on a theorem presented in the paper.
  \begin{equation}
      \text{min}_{i \in [n]} \hat{X}_{i,\pi^*(i)} > \text{max}_{i,j \in [n]: j \neq \pi^*(i)} \hat{X}_{i,j}
  \end{equation}
- and hence, Algorithm (ref) recovers $\hat{\pi}=\pi^*$.
+ and hence, Algorithm \ref{GRAMPA} recovers $\hat{\pi}=\pi^*$.
 \end{theorem}
 
 To gain some intuition on why this proofs that the recovered permutation is the optimal one, let us verbalize what this result means. The theorem is claiming that most likely the "permuted diagonal" is always larger than the other elements in the matrix. This means that the similarity to the corresponding node between the two graphs is higher than the similarity between any other node. In noiseless setting this is obvious, the similarity to the node itself is clearly higher than or equal to the similarity with respect to other nodes. The theorem states that under some condition we can trust that most likely the same is observed even if there is noise. 
 
-Let us next have a glance at the proof of the theorem. The equivariance property (ref?) plays an important role in it. The property allows us to examine the identity permutation $\pi(i) = i$ because the corresponding result should be found with all permutations. Therefore we can examine two matrices: $X = \hat{X}(A,B)$ which is the similarity matrix between the graphs $A$ and $B$, and $X_* = \hat{X}(A,A)$ which presents the similarity matrix in a noiseless setting.
+Let us next have a glance at the proof of the theorem. The property  \ref{equivariance} (equivariance) plays an important role in it. The property allows us to examine the identity permutation $\pi(i) = i$ because the corresponding result should be found with all permutations. Therefore we can examine two matrices: $X = \hat{X}(A,B)$ which is the similarity matrix between the graphs $A$ and $B$, and $X_* = \hat{X}(A,A)$ which presents the similarity matrix in a noiseless setting.
 
 The writers present and proof two important lemmas that are used to complete the proof of the theorem. In short, the other lemmas states that under some conditions we gain lower bound for the diagonal elements of $X_*$ and upper bound to the other elements. The second lemma gives an upper bound for the maximum difference between the elements in $X_*$ and $X$. Note that both lemmas, work in a stochastic setting so the results hold with some probability. Large part of the paper is used to proof these two lemmas, but let us concentrate on the higher level induction. Combining these two lemmas and the equivariance property, the theorem is proved.
 
-\subsection{An optimization perspective on the problem}
 
-The problem as stated in (\ref{QAP}) is an instance of the quadratic assignment problem a (QAP) which is NP-hard. Which can also be written in matrix notation as follows as a combinatorial optimization problem on permutation matrices $\Pi\in \mathcal{G}_n$:
+    
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=7cm]{figures/self_similarity.png}
+    \caption{Illustration of the diagonal-dominance proof: self similarity matrix $\hat{X}$ of $A$ drawn from $GOE(200)$.}
+\end{figure}
+
+
+
+\newpage
+\section{An optimization perspective on the problem}
+
+The problem as stated in (\ref{QAP}) is an instance of the quadratic assignment problem a (QAP) which is NP-hard. Which can also be written in matrix notation as a combinatorial optimization problem on permutation matrices $\Pi\in \mathcal{G}_n$:
 \begin{align*}
     \max_{\Pi\in \mathcal{G}_n}  \langle A,\Pi B \Pi^T \rangle \iff 
     \min_{\Pi\in \mathcal{G}_n} \| A - \Pi B \Pi^T \|_F^2 \iff
     \min_{\Pi\in \mathcal{G}_n} \| A \Pi - \Pi B \|_F^2 
 \end{align*}
+\begin{wrapfigure}{r}{7cm}
+    \caption{A visual illustration of the quadratic unconstrained relaxation to the assignment problem.}\label{wrap-fig:1}
+    \includegraphics[width=7cm]{figures/Projection.pdf}
+    \label{fig:projection}
+\end{wrapfigure} 
 
 Which can in turn be relaxed from the set of permutations to it's convex hull (\textit{the Birkhoff polytope}) into the following a quadratic program which is convex with respect to the relaxed permutation matrix $X$:
 \begin{align}
     \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2
     \label{RelaxedOPTIM}
 \end{align}
-Where the Birkhoff polytope is given by: 
+
+Here the intuition is that a valid permutation matrix is some matrix filled with values $\Pi_{ij} \in \{1,0\}$, s.t all columns and all rows sum to $1$, we will find an approximation of the solution by finding an approximate solution matrix $X$ s.t. $X_{ij} \in [1,0]$ and all column and rows sum to $1$, which we will round to a permutation matrix. 
+
+
+
+The set of all such matrices is given by the \textbf{Birkhoff polytope} which we formally define as: 
 \begin{align*}
     \mathcal{B}_n := \{ X \in \mathbb{R}^{n \times n} : X\bm{1} = \bm{1},X^T\bm{1} = \bm{1}, X_{ij} \geq 0 ~ \forall i,j \},
 \end{align*}
 with $\bm{1}$ denoting the all ones $1 \times n$ vector.\\
 
-We will show that the spectral method we discuss in the next section outputs a matrix $\hat{X}$ which is a minimizer of the following quadratic problem:
+We can show that the spectral method of Alg. \ref{GRAMPA}  outputs a matrix $\hat{X}$ which is a minimizer of the following quadratic problem:
 \begin{align}
-    \min_{X\in \mathcal{B}_n} \| A X - X B \|_F^2 + \frac{\eta^2}{2} \|X\|^2_F - \bm{1}^T X \bm{1}.
-    \label{SpectralOPTIM}
+    \min_{X\in \mathbb{R}^{n\times n}} \| A X - X B \|_F^2 + \frac{\eta^2}{2} \|X\|^2_F - \bm{1}^T X \bm{1}. \label{SpectralOPTIM} 
 \end{align}
-Observe that for well chosen $\eta$ (\refeq{SpectralOPTIM}) has the same solution as (\refeq{RelaxedOPTIM}).
+
+Observe that the solution of the unconstrained $\hat{X}$ of (\ref{SpectralOPTIM}) is a scalar multiple of the solution $\tilde{X}$ of the constrained problem below :
+\begin{align*}
+    \min_{X\in \mathbb{R}^{n\times n}} \| A X - X B \|_F^2 + \frac{\eta^2}{2} \|X\|^2_F, \\
+    \text{s.t.} ~ \bm{1}^T X \bm{1} = n.
+\end{align*}
+Where one can think of $\tilde{X}$ as a projection of $\hat{X}$ onto $\mathcal{B}$ (see figure \ref{fig:projection}). Differentiating the cost of (\ref{SpectralOPTIM}) by $X$ yield the gradient $A^2X+XB^2 - 2AXB + \eta^2X - \bm{J}$, which naturally gives gradient descent dynamics. 
+
+
+\textbf{How do we show that?}\\
+\textbf{Gradient descent on (\ref{SpectralOPTIM}).}\\
 
 \textbf{Titou writes out the convergence proof}
 
-
+\newpage
 \section{Results}
 
 
