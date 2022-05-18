@@ -129,7 +129,25 @@ where the eigenvalues are sorted such that:
 \subsection{Theorem 2.1 Outline}
 \textbf{Noora writes out the outline, focus on the argmax bound}
 
+The above described algorithm relays firmly on a theorem presented in the paper. At the last step of the algorithm, the similarity matrix is rounded to a vector that is claimed to present the estimation of the search permutation (add ref to line in algo). As we can see rounding is done by choosing the permutation that maximizes the sum of the diagonal elements after permuting the columns of the similarity matrix. The theorem, that ensures that this is indeed the best possible permutation, informally tells us that the diagonal elements of the similarity matrix are most likely higher than the other elements.
 
+\begin{theorem}
+ Consider the model (ref). There exist constants $c, c', > 0$ such that if 
+ \begin{equation*}
+     1/n^{0.1} \leq \eta \leq c/\log n \hspace{7mm} \text{and} \hspace{7mm} \sigma \leq c' \eta \text{,}
+ \end{equation*}
+ then with probability at least $1-n^{-4}$ for all large $n$, the matrix $\hat{X}$ in (ref) satisfies
+ \begin{equation}
+     \text{min}_{i \in [n]} \hat{X}_{i,\pi^*(i)} > \text{max}_{i,j \in [n]: j \neq \pi^*(i)} \hat{X}_{i,j}
+ \end{equation}
+ and hence, Algorithm (ref) recovers $\hat{\pi}=\pi^*$.
+\end{theorem}
+
+To gain some intuition on why this proofs that the recovered permutation is the optimal one, let us verbalize what this result means. The theorem is claiming that most likely the "permuted diagonal" is always larger than the other elements in the matrix. This means that the similarity to the corresponding node between the two graphs is higher than the similarity between any other node. In noiseless setting this is obvious, the similarity to the node itself is clearly higher than or equal to the similarity with respect to other nodes. The theorem states that under some condition we can trust that most likely the same is observed even if there is noise. 
+
+Let us next have a glance at the proof of the theorem. The equivariance property (ref?) plays an important role in it. The property allows us to examine the identity permutation $\pi(i) = i$ because the corresponding result should be found with all permutations. Therefore we can examine two matrices: $X = \hat{X}(A,B)$ which is the similarity matrix between the graphs $A$ and $B$, and $X_* = \hat{X}(A,A)$ which presents the similarity matrix in a noiseless setting.
+
+The writers present and proof two important lemmas that are used to complete the proof of the theorem. In short, the other lemmas states that under some conditions we gain lower bound for the diagonal elements of $X_*$ and upper bound to the other elements. The second lemma gives an upper bound for the maximum difference between the elements in $X_*$ and $X$. Note that both lemmas, work in a stochastic setting so the results hold with some probability. Large part of the paper is used to proof these two lemmas, but let us concentrate on the higher level induction. Combining these two lemmas and the equivariance property, the theorem is proved.
 
 \subsection{An optimization perspective on the problem}
 
